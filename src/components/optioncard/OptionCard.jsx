@@ -11,12 +11,32 @@ import {
   ListItemText,
   Typography,
 } from "@mui/material";
+import { BonusString } from "components/shared/BonusString";
 
-const BonusList = ({ bonuses }) => (
+const shouldHalveBonus = (bonus, masteryChecked) =>
+  masteryChecked && bonus.amount < 0;
+
+const halveDownsidesIfMastery = (bonus, masteryChecked) =>
+  shouldHalveBonus(bonus, masteryChecked)
+    ? { ...bonus, amount: bonus.amount / 2 }
+    : bonus;
+
+const BonusList = ({ bonuses, masteryChecked }) => (
   <List dense>
     {bonuses?.map((bonus, index) => (
       <ListItem key={index}>
-        <ListItemText primary={`${bonus.amount}${bonus.type}`} />
+        <ListItemText
+          sx={{
+            fontStyle: shouldHalveBonus(bonus, masteryChecked)
+              ? "italic"
+              : "normal",
+          }}
+          primary={
+            <BonusString
+              bonus={halveDownsidesIfMastery(bonus, masteryChecked)}
+            />
+          }
+        />
       </ListItem>
     )) ?? (
       <ListItem>
@@ -53,7 +73,7 @@ export const OptionCard = ({
           label="Mastery 99"
         />
       </Typography>
-      <BonusList bonuses={bonuses} />
+      <BonusList bonuses={bonuses} masteryChecked={masteryChecked} />
     </CardContent>
     <CardActions sx={{ pt: 0 }}>
       <Button variant={selected ? "contained" : "outlined"} onClick={onSelect}>

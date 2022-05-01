@@ -1,13 +1,55 @@
-import { Card, CardContent, CardHeader, List, ListItem } from "@mui/material";
+import { Card, List, ListItem, ListItemText } from "@mui/material";
+import { BonusString } from "components/shared/BonusString";
+import isNil from "lodash/isNil";
+
+const trimPercentStr = (str) => str.replace("%", "").trim();
+
+const combineBonuses = (bonuses) => {
+  const bonusesByType = {};
+
+  bonuses.forEach((bonus) => {
+    if (!bonusesByType[bonus.type]) {
+      bonusesByType[bonus.type] = {
+        amount: 0,
+        type: bonus.type,
+      };
+    }
+
+    bonusesByType[bonus.type].amount += bonus.amount;
+  });
+
+  return Object.values(bonusesByType)
+    .filter((bonus) => bonus.amount !== 0)
+    .sort((bonus1, bonus2) =>
+      trimPercentStr(bonus1.type).localeCompare(trimPercentStr(bonus2.type))
+    );
+};
 
 export const BonusSummary = ({ data, selected, mastery }) => {
-  const selectedObstacles = data.map((obstacleSection, index) =>
-    selected[index] ? obstacleSection[selected[index]] : null
-  );
+  const selectedObstacles = data.map((obstacleSection, rowIndex) => {
+    if (isNil(selected[rowIndex])) return null;
+
+    const selectedObstacle = obstacleSection[selected[rowIndex]];
+    if (mastery[rowIndex].has(selected[rowIndex])) {
+      return {
+        ...selectedObstacle,
+        bonuses: selectedObstacle?.bonuses.map((bonus) =>
+          bonus.amount > 0
+            ? bonus
+            : {
+                ...bonus,
+                amount: bonus.amount / 2,
+              }
+        ),
+      };
+    } else {
+      return selectedObstacle;
+    }
+  });
   const allBonuses = selectedObstacles
-    .filter((obstacle) => obstacle?.bonuses)
+    .filter((obstacle) => !isNil(obstacle?.bonuses))
     .flatMap((obstacle) => obstacle.bonuses);
-  console.log(allBonuses);
+  const combinedBonuses = combineBonuses(allBonuses);
 
   return (
     <Card sx={{ width: "80%" }}>
@@ -17,10 +59,9 @@ export const BonusSummary = ({ data, selected, mastery }) => {
         </List>
       ) : (
         <List dense>
-          {allBonuses.map((bonus, index) => (
+          {combinedBonuses.map((bonus, index) => (
             <ListItem key={index}>
-              {bonus.amount}
-              {bonus.type}
+              <ListItemText primary={<BonusString bonus={bonus} />} />
             </ListItem>
           ))}
         </List>
