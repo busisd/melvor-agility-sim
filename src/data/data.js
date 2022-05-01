@@ -65,7 +65,7 @@ export const bt = {
   THV_SKILL_PCT: "% Thieving Skill XP",
   THV_STEALTH: " Stealth while Thieving",
   WCT_DBL_PCT: "% Chance to Double Items in Woodcutting",
-  WCT_INT_PCT: "% Woodcutting Interval",
+  WCT_INT_PCT: "% Woodcutting Interval Reduction",
 };
 
 export const obstacleData = [
@@ -129,7 +129,7 @@ export const obstacleData = [
     {
       name: "Stepping Stones",
       bonuses: [
-        { amount: -6, type: bt.WCT_INT_PCT },
+        { amount: 6, type: bt.WCT_INT_PCT },
         { amount: 3, type: bt.FIRE_XP_PCT },
       ],
     },
