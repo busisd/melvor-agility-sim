@@ -12,16 +12,23 @@ import {
   Typography,
 } from "@mui/material";
 import { BonusString } from "components/shared/BonusString";
+import { BonusType } from "data/data";
 
-const shouldHalveBonus = (bonus, masteryChecked) =>
+const shouldHalveBonus = (bonus: BonusType, masteryChecked: boolean) =>
   masteryChecked && bonus.amount < 0;
 
-const halveDownsidesIfMastery = (bonus, masteryChecked) =>
+const halveDownsidesIfMastery = (bonus: BonusType, masteryChecked: boolean) =>
   shouldHalveBonus(bonus, masteryChecked)
     ? { ...bonus, amount: bonus.amount / 2 }
     : bonus;
 
-const BonusList = ({ bonuses, masteryChecked }) => (
+const BonusList = ({
+  bonuses,
+  masteryChecked,
+}: {
+  bonuses: BonusType[] | null;
+  masteryChecked: boolean;
+}) => (
   <List dense>
     {bonuses?.map((bonus, index) => (
       <ListItem key={index}>
@@ -53,6 +60,13 @@ export const OptionCard = ({
   onSelect,
   masteryChecked,
   onMasteryCheck,
+}: {
+  title: string;
+  bonuses: BonusType[] | null;
+  selected: boolean;
+  onSelect: () => void;
+  masteryChecked: boolean;
+  onMasteryCheck: () => void;
 }) => (
   <Card
     sx={{

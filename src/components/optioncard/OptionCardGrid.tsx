@@ -1,5 +1,11 @@
-import { Grid, Typography } from "@mui/material";
+import { Grid } from "@mui/material";
+import {
+  CardCallbackFunction,
+  MasteryArrayType,
+  SelectedArrayType,
+} from "components/mainpage/MainPage";
 import { SubTitle } from "components/shared/SubTitle";
+import { ObstacleDataType, ObstacleType } from "data/data";
 import { OptionCard } from "./OptionCard";
 
 const OptionCardGridRow = ({
@@ -9,6 +15,13 @@ const OptionCardGridRow = ({
   onSelect,
   rowMastery,
   onMasteryCheck,
+}: {
+  rowIndex: number;
+  rowData: ObstacleType[];
+  rowSelected: number | null;
+  onSelect: CardCallbackFunction;
+  rowMastery: Set<number>;
+  onMasteryCheck: CardCallbackFunction;
 }) => {
   return (
     <>
@@ -39,15 +52,24 @@ export const OptionCardGrid = ({
   onSelect,
   mastery,
   onMasteryCheck,
-}) =>
-  data.map((rowData, index) => (
-    <OptionCardGridRow
-      rowData={rowData}
-      rowIndex={index}
-      rowSelected={selected[index]}
-      onSelect={onSelect}
-      rowMastery={mastery[index]}
-      onMasteryCheck={onMasteryCheck}
-      key={index}
-    />
-  ));
+}: {
+  data: ObstacleDataType;
+  selected: SelectedArrayType;
+  mastery: MasteryArrayType;
+  onSelect: CardCallbackFunction;
+  onMasteryCheck: CardCallbackFunction;
+}) => (
+  <>
+    {data.map((rowData, index) => (
+      <OptionCardGridRow
+        rowData={rowData}
+        rowIndex={index}
+        rowSelected={selected[index]}
+        onSelect={onSelect}
+        rowMastery={mastery[index]}
+        onMasteryCheck={onMasteryCheck}
+        key={index}
+      />
+    ))}
+  </>
+);

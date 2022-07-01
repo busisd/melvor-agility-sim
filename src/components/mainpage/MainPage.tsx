@@ -1,14 +1,10 @@
 import {
-  Button,
-  Container,
   createTheme,
   CssBaseline,
-  Grid,
   Stack,
   ThemeProvider,
   Typography,
 } from "@mui/material";
-import { OptionCard } from "components/optioncard/OptionCard";
 import { OptionCardGrid } from "components/optioncard/OptionCardGrid";
 import { useCallback, useState } from "react";
 import { obstacleData } from "data/data";
@@ -21,12 +17,23 @@ const darkTheme = createTheme({
   },
 });
 
+export type SelectedArrayType = (number | null)[];
+export type MasteryArrayType = Set<number>[];
+export type CardCallbackFunction = (
+  rowIndex: number,
+  columnIndex: number
+) => void;
+
 function MainPage() {
-  const [selected, setSelected] = useState(obstacleData.map(() => null));
-  const [mastery, setMastery] = useState(obstacleData.map(() => new Set()));
+  const [selected, setSelected] = useState<SelectedArrayType>(
+    obstacleData.map(() => null)
+  );
+  const [mastery, setMastery] = useState<MasteryArrayType>(
+    obstacleData.map(() => new Set<number>())
+  );
 
   const onSelect = useCallback(
-    (rowIndex, colIndex) => {
+    (rowIndex: number, colIndex: number) => {
       setSelected((prev) => {
         const newSelected = prev[rowIndex] === colIndex ? null : colIndex;
 
@@ -41,7 +48,7 @@ function MainPage() {
   );
 
   const onMasteryCheck = useCallback(
-    (rowIndex, colIndex) => {
+    (rowIndex: number, colIndex: number) => {
       setMastery((prev) => {
         const newMastery = new Set(prev[rowIndex]);
         if (newMastery.has(colIndex)) {
@@ -52,6 +59,7 @@ function MainPage() {
 
         return [
           ...prev.slice(0, rowIndex),
+
           newMastery,
           ...prev.slice(rowIndex + 1),
         ];
