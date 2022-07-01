@@ -1,4 +1,4 @@
-import { Card, List, ListItem, ListItemText } from "@mui/material";
+import { Button, Card, List, ListItem, ListItemText } from "@mui/material";
 import {
   MasteryArrayType,
   SelectedArrayType,
@@ -11,6 +11,9 @@ import {
   ObstacleType,
 } from "data/data";
 import isNil from "lodash/isNil";
+import { useDispatch, useSelector } from "react-redux";
+import { decrement, increment } from "state/counterSlice";
+import { RootState, useAppDispatch, useAppSelector } from "state/store";
 import { BonusString } from "../shared/BonusString";
 
 const trimPercentStr = (str: string) => str.replace("%", "").trim();
@@ -78,6 +81,9 @@ export const BonusSummary = ({
     .flatMap((obstacle) => obstacle!.bonuses!);
   const combinedBonuses = combineBonuses(allBonuses);
 
+  const count = useAppSelector((state) => state.counter.value);
+  const dispatch = useAppDispatch();
+
   return (
     <Card sx={{ width: "80%" }}>
       {allBonuses.length === 0 ? (
@@ -93,6 +99,9 @@ export const BonusSummary = ({
           ))}
         </List>
       )}
+      {count}
+      <Button onClick={() => dispatch(increment())}>Test increment</Button>
+      <Button onClick={() => dispatch(decrement())}>Test decrement</Button>
     </Card>
   );
 };
