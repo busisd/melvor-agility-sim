@@ -12,7 +12,7 @@ import {
 } from "data/data";
 import isNil from "lodash/isNil";
 import { useDispatch, useSelector } from "react-redux";
-import { decrement, increment } from "state/counterSlice";
+import { decrement, increment, incrementByAmount } from "state/counterSlice";
 import { RootState, useAppDispatch, useAppSelector } from "state/store";
 import { BonusString } from "../shared/BonusString";
 
@@ -81,7 +81,7 @@ export const BonusSummary = ({
     .flatMap((obstacle) => obstacle!.bonuses!);
   const combinedBonuses = combineBonuses(allBonuses);
 
-  const count = useAppSelector((state) => state.counter.value);
+  const count = useAppSelector((state) => Boolean(state.counter.value === 3).toString());
   const dispatch = useAppDispatch();
 
   return (
@@ -101,6 +101,7 @@ export const BonusSummary = ({
       )}
       {count}
       <Button onClick={() => dispatch(increment())}>Test increment</Button>
+      <Button onClick={() => dispatch(incrementByAmount(2))}>Test double increment</Button>
       <Button onClick={() => dispatch(decrement())}>Test decrement</Button>
     </Card>
   );
