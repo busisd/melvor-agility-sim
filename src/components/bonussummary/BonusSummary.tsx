@@ -82,7 +82,7 @@ export const BonusSummary = () => {
       ) : (
         <List dense>
           {combinedBonuses.map((bonus, index) => (
-            <ListItem key={index}>
+            <ListItem sx={{ py: 0 }} key={index}>
               <ListItemText primary={<BonusString bonus={bonus} />} />
             </ListItem>
           ))}
