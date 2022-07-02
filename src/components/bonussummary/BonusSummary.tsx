@@ -1,4 +1,4 @@
-import { Button, Card, List, ListItem, ListItemText } from "@mui/material";
+import { Card, List, ListItem, ListItemText } from "@mui/material";
 import { ObstacleContext } from "components/App";
 import {
   BonusType,
@@ -8,9 +8,7 @@ import {
 } from "data/data";
 import isNil from "lodash/isNil";
 import { useContext, useMemo } from "react";
-import { decrement, increment, incrementByAmount } from "state/counterSlice";
-import { setMastery } from "state/masterySlice";
-import { useAppDispatch, useAppSelector } from "state/store";
+import { useAppSelector } from "state/store";
 import { BonusString } from "../shared/BonusString";
 
 const trimPercentStr = (str: string) => str.replace("%", "").trim();
@@ -43,7 +41,6 @@ export const BonusSummary = () => {
 
   const selected = useAppSelector((state) => state.selectedObstacles);
   const mastery = useAppSelector((state) => state.mastery);
-  const dispatch = useAppDispatch();
 
   const combinedBonuses = useMemo(() => {
     const selectedObstacles: (ObstacleType | null)[] = obstacles.map(
@@ -76,10 +73,6 @@ export const BonusSummary = () => {
     return combineBonuses(allBonuses);
   }, [mastery, obstacles, selected]);
 
-  const count = useAppSelector((state) =>
-    Boolean(state.counter.value === 3).toString()
-  );
-
   return (
     <Card sx={{ width: "80%" }}>
       {combinedBonuses.length === 0 ? (
@@ -95,15 +88,6 @@ export const BonusSummary = () => {
           ))}
         </List>
       )}
-      {count}
-      <Button onClick={() => dispatch(increment())}>Test increment</Button>
-      <Button onClick={() => dispatch(incrementByAmount(2))}>
-        Test double increment
-      </Button>
-      <Button onClick={() => dispatch(decrement())}>Test decrement</Button>
-      <Button onClick={() => dispatch(setMastery({ slot: 3, number: 3 }))}>
-        Test set mastery
-      </Button>
     </Card>
   );
 };
