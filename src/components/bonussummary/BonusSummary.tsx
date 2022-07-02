@@ -1,19 +1,16 @@
 import { Button, Card, List, ListItem, ListItemText } from "@mui/material";
-import {
-  MasteryArrayType,
-  SelectedArrayType,
-} from "components/mainpage/MainPage";
+import { ObstacleContext } from "components/App";
 import {
   BonusType,
   BonusTypeKey,
   bonusTypeStrings,
-  ObstacleDataType,
   ObstacleType,
 } from "data/data";
 import isNil from "lodash/isNil";
-import { useDispatch, useSelector } from "react-redux";
+import { useContext, useMemo } from "react";
 import { decrement, increment, incrementByAmount } from "state/counterSlice";
-import { RootState, useAppDispatch, useAppSelector } from "state/store";
+import { setMastery } from "state/masterySlice";
+import { useAppDispatch, useAppSelector } from "state/store";
 import { BonusString } from "../shared/BonusString";
 
 const trimPercentStr = (str: string) => str.replace("%", "").trim();
@@ -41,52 +38,51 @@ const combineBonuses = (bonuses: BonusType[]) => {
     );
 };
 
-export const BonusSummary = ({
-  data,
-  selected,
-  mastery,
-}: {
-  data: ObstacleDataType;
-  selected: SelectedArrayType;
-  mastery: MasteryArrayType;
-}) => {
-  const selectedObstacles: (ObstacleType | null)[] = data.map(
-    (obstacleSection, rowIndex) => {
-      const currentSelectedObstacleNumber = selected[rowIndex];
+export const BonusSummary = () => {
+  const obstacles = useContext(ObstacleContext);
 
-      if (isNil(currentSelectedObstacleNumber)) return null;
-
-      const selectedObstacle = obstacleSection[currentSelectedObstacleNumber];
-
-      if (mastery[rowIndex].has(currentSelectedObstacleNumber)) {
-        return {
-          ...selectedObstacle,
-          bonuses:
-            selectedObstacle.bonuses?.map((bonus) =>
-              bonus.amount > 0
-                ? bonus
-                : {
-                    ...bonus,
-                    amount: bonus.amount / 2,
-                  }
-            ) ?? null,
-        };
-      } else {
-        return selectedObstacle;
-      }
-    }
-  );
-  const allBonuses = selectedObstacles
-    .filter((obstacle) => !isNil(obstacle?.bonuses))
-    .flatMap((obstacle) => obstacle!.bonuses!);
-  const combinedBonuses = combineBonuses(allBonuses);
-
-  const count = useAppSelector((state) => Boolean(state.counter.value === 3).toString());
+  const selected = useAppSelector((state) => state.selectedObstacles);
+  const mastery = useAppSelector((state) => state.mastery);
   const dispatch = useAppDispatch();
+
+  const combinedBonuses = useMemo(() => {
+    const selectedObstacles: (ObstacleType | null)[] = obstacles.map(
+      (obstacleSection, rowIndex) => {
+        const currentSelectedObstacleNumber = selected[rowIndex];
+
+        if (isNil(currentSelectedObstacleNumber)) return null;
+
+        const selectedObstacle = obstacleSection[currentSelectedObstacleNumber];
+
+        return mastery[rowIndex][currentSelectedObstacleNumber]
+          ? {
+              ...selectedObstacle,
+              bonuses:
+                selectedObstacle.bonuses?.map((bonus) =>
+                  bonus.amount > 0
+                    ? bonus
+                    : {
+                        ...bonus,
+                        amount: bonus.amount / 2,
+                      }
+                ) ?? null,
+            }
+          : selectedObstacle;
+      }
+    );
+    const allBonuses = selectedObstacles
+      .filter((obstacle) => !isNil(obstacle?.bonuses))
+      .flatMap((obstacle) => obstacle!.bonuses!);
+    return combineBonuses(allBonuses);
+  }, [mastery, obstacles, selected]);
+
+  const count = useAppSelector((state) =>
+    Boolean(state.counter.value === 3).toString()
+  );
 
   return (
     <Card sx={{ width: "80%" }}>
-      {allBonuses.length === 0 ? (
+      {combinedBonuses.length === 0 ? (
         <List dense>
           <ListItem>None</ListItem>
         </List>
@@ -101,8 +97,13 @@ export const BonusSummary = ({
       )}
       {count}
       <Button onClick={() => dispatch(increment())}>Test increment</Button>
-      <Button onClick={() => dispatch(incrementByAmount(2))}>Test double increment</Button>
+      <Button onClick={() => dispatch(incrementByAmount(2))}>
+        Test double increment
+      </Button>
       <Button onClick={() => dispatch(decrement())}>Test decrement</Button>
+      <Button onClick={() => dispatch(setMastery({ slot: 3, number: 3 }))}>
+        Test set mastery
+      </Button>
     </Card>
   );
 };

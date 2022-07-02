@@ -1,75 +1,49 @@
 import { Grid } from "@mui/material";
-import {
-  CardCallbackFunction,
-  MasteryArrayType,
-  SelectedArrayType,
-} from "components/mainpage/MainPage";
+import { ObstacleContext } from "components/App";
 import { SubTitle } from "components/shared/SubTitle";
-import { ObstacleDataType, ObstacleType } from "data/data";
+import { useContext } from "react";
 import { OptionCard } from "./OptionCard";
 
-const OptionCardGridRow = ({
-  rowIndex,
-  rowData,
-  rowSelected,
-  onSelect,
-  rowMastery,
-  onMasteryCheck,
-}: {
-  rowIndex: number;
-  rowData: ObstacleType[];
-  rowSelected: number | null;
-  onSelect: CardCallbackFunction;
-  rowMastery: Set<number>;
-  onMasteryCheck: CardCallbackFunction;
-}) => {
+const range = (length: number) => [...new Array(length).keys()];
+
+const OptionCardGridRow = ({ rowIndex }: { rowIndex: number }) => {
+  const obstacles = useContext(ObstacleContext);
+  const rowLength = obstacles[rowIndex].length;
+
   return (
     <>
       <SubTitle>Obstacle Slot {rowIndex + 1}</SubTitle>
       <Grid container justifyContent="center" spacing={2}>
-        {rowData.map((obstacle, index) => {
-          return (
-            <Grid item xs={3} key={index}>
-              <OptionCard
-                title={obstacle.name}
-                bonuses={obstacle.bonuses}
-                selected={rowSelected === index}
-                onSelect={() => onSelect(rowIndex, index)}
-                masteryChecked={rowMastery.has(index)}
-                onMasteryCheck={() => onMasteryCheck(rowIndex, index)}
-              />
-            </Grid>
-          );
-        })}
+        {range(rowLength).map((_i, index) => (
+          <Grid item xs={3} key={index}>
+            <OptionCard slot={rowIndex} number={index} />
+          </Grid>
+        ))}
       </Grid>
     </>
   );
 };
 
-export const OptionCardGrid = ({
-  data,
-  selected,
-  onSelect,
-  mastery,
-  onMasteryCheck,
-}: {
-  data: ObstacleDataType;
-  selected: SelectedArrayType;
-  mastery: MasteryArrayType;
-  onSelect: CardCallbackFunction;
-  onMasteryCheck: CardCallbackFunction;
-}) => (
-  <>
-    {data.map((rowData, index) => (
-      <OptionCardGridRow
-        rowData={rowData}
-        rowIndex={index}
-        rowSelected={selected[index]}
-        onSelect={onSelect}
-        rowMastery={mastery[index]}
-        onMasteryCheck={onMasteryCheck}
-        key={index}
-      />
-    ))}
-  </>
-);
+export const OptionCardGrid = () => {
+  const obstacles = useContext(ObstacleContext);
+  const rows = obstacles.length;
+
+  console.log(
+    obstacles.map((obstacleRow) =>
+      Object.fromEntries(
+        obstacleRow.map((_obstacle, index): [string, boolean] => [
+          index.toString(),
+          false,
+        ])
+      )
+    )
+  );
+
+  return (
+    <>
+      {range(rows).map((_i, index) => (
+        <OptionCardGridRow rowIndex={index} key={index} />
+      ))}
+    </>
+  );
+};
