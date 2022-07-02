@@ -1,5 +1,13 @@
-import { Card, List, ListItem, ListItemText } from "@mui/material";
+import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+  List,
+  ListItem,
+  ListItemText,
+} from "@mui/material";
 import { ObstacleContext } from "components/App";
+import { SubTitle } from "components/shared/SubTitle";
 import {
   BonusType,
   BonusTypeKey,
@@ -10,6 +18,7 @@ import isNil from "lodash/isNil";
 import { useContext, useMemo } from "react";
 import { useAppSelector } from "state/store";
 import { BonusString } from "../shared/BonusString";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 const trimPercentStr = (str: string) => str.replace("%", "").trim();
 
@@ -74,20 +83,25 @@ export const BonusSummary = () => {
   }, [mastery, obstacles, selected]);
 
   return (
-    <Card sx={{ width: "80%" }}>
-      {combinedBonuses.length === 0 ? (
-        <List dense>
-          <ListItem>None</ListItem>
-        </List>
-      ) : (
-        <List dense>
-          {combinedBonuses.map((bonus, index) => (
-            <ListItem sx={{ py: 0 }} key={index}>
-              <ListItemText primary={<BonusString bonus={bonus} />} />
-            </ListItem>
-          ))}
-        </List>
-      )}
-    </Card>
+    <Accordion sx={{ width: "80%" }} defaultExpanded>
+      <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+        <SubTitle>All active bonuses</SubTitle>
+      </AccordionSummary>
+      <AccordionDetails>
+        {combinedBonuses.length === 0 ? (
+          <List dense>
+            <ListItem>None</ListItem>
+          </List>
+        ) : (
+          <List dense>
+            {combinedBonuses.map((bonus, index) => (
+              <ListItem sx={{ py: 0 }} key={index}>
+                <ListItemText primary={<BonusString bonus={bonus} />} />
+              </ListItem>
+            ))}
+          </List>
+        )}
+      </AccordionDetails>
+    </Accordion>
   );
 };

@@ -1,7 +1,6 @@
 import { obstacleData } from "data/data";
 import { createContext } from "react";
 import { store } from "state/store";
-
 import { Provider } from "react-redux";
 import MainPage from "./mainpage/MainPage";
 

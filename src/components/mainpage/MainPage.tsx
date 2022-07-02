@@ -6,7 +6,6 @@ import {
   Typography,
 } from "@mui/material";
 import { OptionCardGrid } from "components/optioncard/OptionCardGrid";
-import { SubTitle } from "components/shared/SubTitle";
 import { BonusSummary } from "components/bonussummary/BonusSummary";
 
 const darkTheme = createTheme({
@@ -26,8 +25,9 @@ function MainPage() {
           sx={{ px: "10vw" }}
           alignItems="center"
         >
-          <Typography variant="h2">Melvor Idle Agility Simulator</Typography>
-          <SubTitle>All active bonuses</SubTitle>
+          <Typography variant="h2">
+            Melvor Idle Agility Bonus Simulator
+          </Typography>
           <BonusSummary />
           <OptionCardGrid />
         </Stack>

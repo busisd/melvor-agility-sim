@@ -81,6 +81,7 @@ export const OptionCard = ({
 
   return (
     <Card
+      elevation={3}
       sx={{
         backgroundColor: selected ? "grey.800" : "background.default",
       }}
